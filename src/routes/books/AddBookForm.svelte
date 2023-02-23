@@ -6,13 +6,13 @@
 	import { modalStore } from "@skeletonlabs/skeleton";
 	// Form Data
 	const formData = {
-		name: '',
-		tel: '',
-		email: ''
+		title: '',
+		author: '',
+		genre: ''
 	};
 	// We've created a custom submit function to pass the response and close the modal.
 	function onFormSubmit(): void {
-		$modalStore[0].response(formData);
+		if ($modalStore[0].response) $modalStore[0].response(formData);
 		modalStore.close();
 	}
 	// Base Classes
@@ -27,16 +27,16 @@
 	<!-- <pre>{JSON.stringify(formData, null, 2)}</pre> -->
 	<form class="modal-form {cForm}">
 		<label>
-			<span>ISBN</span>
-			<input type="text" bind:value={formData.name} placeholder="Enter name..." />
-		</label>
-		<label>
 			<span>Title</span>
-			<input type="tel" bind:value={formData.tel} placeholder="Enter title..." />
+			<input type="text" bind:value={formData.title} placeholder="Enter title..." />
 		</label>
 		<label>
 			<span>Author</span>
-			<input type="email" bind:value={formData.email} placeholder="Enter author..." />
+			<input type="tel" bind:value={formData.author} placeholder="Enter author..." />
+		</label>
+		<label>
+			<span>Genre</span>
+			<input type="email" bind:value={formData.genre} placeholder="Enter genre..." />
 		</label>
 	</form>
 	<!-- prettier-ignore -->

@@ -1,22 +1,49 @@
-
-<script>
+<script lang="ts">
     import { GradientHeading } from '@skeletonlabs/skeleton';
+	import { Chart } from "chart.js/auto";
+	import { onMount } from 'svelte';
+
+	const data = {
+		labels: [
+			'Red',
+			'Blue',
+			'Yellow'
+		],
+		datasets: [{
+			label: 'Test Chart',
+			data: [300, 200, 100],
+			backgroundColor: [
+				'rgb(255, 0, 0)',
+				'rgb(0, 255, 0)',
+				'rgb(0, 0, 255)'
+			],
+			hoverOffset: 4
+		}]
+	};
+
+	const chartConfig = {
+		type: 'pie',
+		data: data
+	}
+
+	let ctx;
+	let chart1;
+
+	onMount(async (promise) => {
+		ctx = chart1.getContext('2d');
+		var chart = new Chart(ctx, chartConfig)
+	})
+
 </script>
-        
+
 <div class="container mx-auto p-8 space-y-8">
     <GradientHeading tag="h1" direction="bg-gradient-to-br" from="from-primary-500" to="to-accent-500">
         Homepage
     </GradientHeading>
-	<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+	<p>hello1.</p>
 	<hr />
 	<section class="card card-body">
-		<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+		<canvas bind:this={chart1} id="myChart"></canvas>
 	</section>
 	<hr />
-	<section class="flex space-x-2">
-      <a class="btn btn-filled-primary" href="https://kit.svelte.dev/" target="_blank" rel="noreferrer">SvelteKit</a>
-      <a class="btn btn-filled-accent" href="https://tailwindcss.com/" target="_blank" rel="noreferrer">Tailwind</a>
-      <a class="btn btn-filled-tertiary" href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
-    </section>
 </div>
-                

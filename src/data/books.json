@@ -1,0 +1,28 @@
+[
+    {
+        "id": 1,
+        "title": "testTitle",
+        "author": "testAuthor",
+        "genre": "testGenre",
+        "isbn": "testIsbn",
+        "pubDate": "2023",
+        "pageCount": "999",
+        "description": "This is a book",
+        "imageLink": "https://google.co.uk",
+        "publisher": "Millo Books",
+        "language": "English"
+    },
+    {
+        "id": 2,
+        "title": "book2",
+        "author": "author2",
+        "genre": "genre2",
+        "isbn": "isbn2",
+        "pubDate": "2023",
+        "pageCount": "999",
+        "description": "This is a book",
+        "imageLink": "https://google.co.uk",
+        "publisher": "Millo Books",
+        "language": "English"
+    }
+]

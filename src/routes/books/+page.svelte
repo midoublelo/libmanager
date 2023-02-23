@@ -1,74 +1,88 @@
 <script lang="ts">
-	// import isbn = require('node-isbn');
-	// import isbn from 'node-isbn';
 	import * as isbn from 'node-isbn';
 
 	import {
-		type DataTableModel,
+		createDataTableStore,
 		dataTableHandler,
-		dataTableSelect,
-		dataTableSelectAll,
-		dataTableSort,
 		tableInteraction,
 		tableA11y,
 		Paginator,
 		Modal,
 		modalStore,
-		menu
+		menu,
 	} from '@skeletonlabs/skeleton';
 	
-	import type { ModalSettings, ModalComponent} from '@skeletonlabs/skeleton';
+	import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
 
-    import { writable, type Writable } from 'svelte/store';
 	import AddBookForm from "./AddBookForm.svelte";
 	import AddIsbnForm from './AddISBNForm.svelte';
 
-    let sourceData = [
-        { id: 0, title: 'testTitle', author: "testAuthor", genre: 'testGenre', isbn:"testIsbn" },
-    ]
+	// import { LowSync } from 'lowdb';
+	// import { LocalStorage } from 'lowdb/browser';
 
-const dataTableModel: Writable<DataTableModel> = writable({
-	// The original unfiltered source data.
-	source: sourceData,
-	// The filtered source data, shown in UI.
-	filtered: sourceData,
-	// Optional: An array of selected row objects.
-	selection: [],
-	// Optional: The current search term.
-	search: '',
-	// Optional: The current sort key.
-	sort: '',
-	// Optional: The Paginator component settings.
-	pagination: { offset: 0, limit: 10, size: 0, amounts: [1, 5, 10, 25] }
+	// const adapter = new LocalStorage('db');
+	// const db = new LowSync(adapter);
 
-});
+	// db.read()
+	// db.data ||= { books: [] }
+
+	// db.data.books.push({ title: 'test' })
+
+	// console.log(db.data)
+
+	// let nothing = {
+    //     id: -1,
+	// }
+	// const booksStore: Writable<string> = localStorageStore('booksStore', JSON.stringify(nothing));
+	let sourceData = [
+		{}
+	];
+
+const dataTableModel = createDataTableStore(
+	// Pass your source data here:
+	sourceData,
+	// Provide optional settings:
+	{
+		// The current search term.
+		search: '',
+		// The current sort key.
+		sort: '',
+		// Paginator component settings.
+		pagination: { offset: 0, limit: 5, size: 0, amounts: [1, 5, 10, 25] }
+	}
+);
 
 function confirmBook(bookData: object): void {
-	console.log(bookData)
-	const id = Object.keys(sourceData).length;
-	const bookObj: any = {
-		id: id,
-		// @ts-ignore
-		title: bookData['title'],
-		// @ts-ignore
-		author: bookData['authors'],
-		// @ts-ignore
-		genre: bookData['categories'],
-		// @ts-ignore
-		isbn: bookData['isbn']
-	}
-	console.log(bookObj);
+	const id = Object.keys(sourceData).length + 1;
+	// @ts-ignore
+	bookData["id"] = id;
 	const confirm: ModalSettings = {
 		type: 'confirm',
 		title: 'Please Confirm',
 		body: 'Are you sure you wish to proceed?',
 		// confirm = TRUE | cancel = FALSE
 		response: (r: boolean) => {
-			if (r) sourceData.push(bookObj);
+			if (r) {
+				let newBook = {
+					"id": bookData["id"],
+					"title": bookData["title"],
+					"author": bookData["author"],
+					"genre": bookData["genre"],
+					"isbn": "",
+					"pubDate": "",
+					"pageCount": "",
+					"description": "",
+					"imageLink": "",
+					"publisher": "",
+					"language": ""
+				}
+				// let curBooks = JSON.parse($booksStore)
+				// $booksStore = JSON.stringify(curBooks.concat(newBook))
+				dataTableModel.updateSource( JSON.parse(lib.queryAll("books")) )
+			}
 		}
 	};
 	modalStore.trigger(confirm);
-	console.log(sourceData);
 	// dataTableModel.update((v) => dataTableHandler(v));
 }
 
@@ -80,7 +94,8 @@ function addBook(): void {
 			body: 'Enter book details',
 			component: c,
 			response: (r: any) => {
-				if (r) console.log('response:', r);
+				// if (r) console.log('response:', r);
+				if (r) confirmBook(r);
 			}
 		};
 	modalStore.trigger(d);
@@ -130,12 +145,12 @@ dataTableModel.subscribe((v) => dataTableHandler(v));
 		<div class="card-body">
 			<div class="table-container">
 				<table class="table table-hover" use:tableInteraction>
-					<thead on:click={(e) => { dataTableSort(e, dataTableModel) }} on:keypress>
+					<thead on:click={(e) => { dataTableModel.sort(e) }} on:keypress>
 						<tr>
-							<th data-sort="id">ID</th>
-							<th data-sort="name">Title</th>
-							<th data-sort="symbol">Author</th>
-							<th data-sort="weight">Genre</th>
+							<th data-sort="title">Title</th>
+							<th data-sort="author">Author</th>
+							<th data-sort="genre">Genre</th>
+							<th data-sort="pubData">Publication Date</th>
 							<!-- <th data-sort="isbn">ISBN</th> -->
 							<th class="edit">Modify</th>
 							<!-- ... --->
@@ -144,14 +159,14 @@ dataTableModel.subscribe((v) => dataTableHandler(v));
 					<tbody>
 						{#each $dataTableModel.filtered as row, rowIndex}
 							<tr>
-								<td>{row.id}</td>
 								<td>{row.title}</td>
 								<td>{row.author}</td>
 								<td>{row.genre}</td>
+								<td>{row.pubDate}</td>
 								<!-- <td>{row.isbn}</td> -->
 								<td class="edit">
-									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{console.log(row,rowIndex)}}>Edit</button>
-									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{console.log(row,rowIndex)}}>View</button>
+									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{console.log(row, rowIndex)}}>Edit</button>
+									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{console.log(row, rowIndex)}}>View</button>
 								</td>
 							</tr>
 						{/each}
