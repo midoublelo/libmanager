@@ -15,6 +15,7 @@
     "@sveltejs/kit": "^1.8.3",
     "@tailwindcss/forms": "^0.5.3",
     "autoprefixer": "^10.4.7",
+    "fake-indexeddb": "^4.0.1",
     "postcss": "^8.4.14",
     "postcss-load-config": "^4.0.1",
     "svelte": "^3.53.1",
@@ -30,7 +31,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "chart.js": "^4.2.1",
-    "lowdb": "^5.1.0",
+    "dexie": "^3.2.3",
     "node-isbn": "^1.6.1",
     "svelte-fa": "^3.0.3"
   }

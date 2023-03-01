@@ -1,4 +1,5 @@
 <script lang="ts">
+import { db, wipeDb } from '$lib/db';
 import { Settings, updateSettings } from '$lib/values';
 import { TabGroup, Tab } from '@skeletonlabs/skeleton';
 import { writable } from 'svelte/store';
@@ -41,6 +42,8 @@ function saveSettings() {
                     <div class="card card-body space-y-4">
                         Library Name <input id="libName">
                         <button class="btn variant-filled-primary btn-base" on:click={()=>{saveSettings()}}>Save</button>
+                        <br/>
+                        <button class="btn variant-filled-primary" on:click={()=>{wipeDb()}}>Delete All Books</button>
                     </div>
                 </div>
             {/if}

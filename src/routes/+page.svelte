@@ -28,6 +28,7 @@
 
 	let ctx;
 	let chart1;
+	Chart.defaults.color = '#FFFFFF'
 
 	onMount(async (promise) => {
 		ctx = chart1.getContext('2d');
@@ -43,7 +44,7 @@
 	<p>hello1.</p>
 	<hr />
 	<section class="card card-body">
-		<canvas bind:this={chart1} id="myChart"></canvas>
+		<canvas bind:this={chart1} id="myChart" class="scale-50 -translate-x-32 translate-y-16"></canvas>
 	</section>
 	<hr />
 </div>

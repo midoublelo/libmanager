@@ -5,9 +5,6 @@
 
   import LoginForm from '../components/LoginForm.svelte';
   import { store } from "../hooks/auth"
-	import Transition from '../components/transition.svelte'
-
-  import { page } from "$app/stores";
 
     // Logout
     // $store = null;
@@ -38,7 +35,6 @@
           <button class="btn-icon items-right" use:menu={{ menu: 'userMenu' }}> <Fa icon={faUser} /> </button>
           <nav class="list-nav card p-4 w-40 shadow-xl" data-menu="userMenu">
             <ul>
-              <li><a href={'/settings'}>Settings</a></li>
               <li><a href={''} on:click={logOut}>Logout</a></li>
             </ul>
           </nav>
@@ -52,7 +48,7 @@
           <li><a href="/"><Fa icon={faHouse} /> Home</a></li>
           <li><a href="/books"><Fa icon={faBook} /> Books</a></li>
           <li><a href="/users"><Fa icon={faUsers} /> Users</a></li>
-          <!-- <li><a href="/settings"><Fa icon={faGears} />Settings</a></li> -->
+          <li><a href="/settings"><Fa icon={faGears} />Settings</a></li>
         </ul>
       </nav>
     </svelte:fragment>
