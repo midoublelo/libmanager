@@ -1,6 +1,6 @@
 <script lang="ts">
 import { db, wipeDb } from '$lib/db';
-import { Settings, updateSettings } from '$lib/values';
+import { Settings, updateSettings } from '$lib/stores';
 import { TabGroup, Tab } from '@skeletonlabs/skeleton';
 import { writable } from 'svelte/store';
 

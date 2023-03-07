@@ -9,7 +9,8 @@
 		title: '',
 		author: '',
 		genre: '',
-		pubDate: ''
+		pubDate: '',
+		copies: 0
 	};
 	// We've created a custom submit function to pass the response and close the modal.
 	function onFormSubmit(): void {
@@ -67,6 +68,10 @@
 		<label>
 			<span>Publication Date</span>
 			<input type="text" bind:value={formData.pubDate} placeholder="Enter publication date..." required/>
+		</label>
+		<label>
+			<span>Copies in Stock</span>
+			<input type="number" bind:value={formData.copies} placeholder="Enter number of copies..." required/>
 		</label>
 	</form>
 	<footer class="modal-footer {parent.regionFooter}">

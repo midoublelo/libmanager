@@ -1,3 +1,7 @@
+import { writable } from "svelte/store";
+
+export const currentBook = writable();
+
 export let Settings = {
     title: "My Library"
 }

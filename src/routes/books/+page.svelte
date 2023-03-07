@@ -12,17 +12,20 @@
 		modalStore,
 		menu,
         ProgressRadial,
+        ProgressBar,
 	} from '@skeletonlabs/skeleton';
 	
 	import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
 
 	import AddBookForm from "./AddBookForm.svelte";
 	import AddIsbnForm from './AddISBNForm.svelte';
+	import ViewBook from './ViewBook.svelte';
 
 	import { browser } from '$app/environment';
 	import { liveQuery } from "dexie";
-	import { addItem, db, wipeDb } from "../../lib/db";
-    import { faLanguage } from '@fortawesome/free-solid-svg-icons';
+	import { addItem, db } from "$lib/db";
+	import { currentBook } from '$lib/stores';
+    import UploadFile from './UploadFile.svelte';
 
 	const bookList = liveQuery(
 		async () => browser
@@ -87,7 +90,8 @@ async function confirmBook(bookData: object) {
 					bookData["title"],
 					bookData["author"],
 					bookData["genre"],
-					bookData["pubDate"])
+					bookData["pubDate"],
+					bookData["copies"])
 				loadSource()
 			}
 		}
@@ -111,9 +115,27 @@ function addBook(): void {
 	modalStore.trigger(d);
 }
 
-function getIsbn(isbnCode: any): any { 
-	const bookData = isbn.resolve(isbnCode);
-	return bookData;
+function addFile(): void {
+	const c: ModalComponent = { ref: UploadFile };
+	const d: ModalSettings = {
+		type: 'component',
+		title: 'Add Books',
+		body: 'Upload .csv file to add multiple books at once.',
+		component: c,
+		response: (r: any) => {
+			if (r) console.log(r)
+		}
+	}
+	modalStore.trigger(d);
+}
+
+function getIsbn(isbnCode: any): any {
+	try { 
+		const bookData = isbn.resolve(isbnCode);
+		return bookData;
+	} catch(ReferenceError) {
+		alert('Connection failed')
+	}
 }
 
 function addISBN(): void {
@@ -151,23 +173,28 @@ function addISBN(): void {
 }
 
 function viewBookData(book) {
-	const bodyText = `
-	Title: ${book['title']}
-	Author: ${book['author']}
-	Genre: ${book['genre']}
-	Publication Date: ${book['pubDate']}
-	Page Count: ${book['pageCount']}
-	Description: ${book['description']}
-	Publisher: ${book['publisher']}
-	Language: ${book['languge']}`
-	console.log(book);
+	$currentBook = book;
+	console.log($currentBook)
+	const c: ModalComponent = { ref: ViewBook };
 	const data: ModalSettings = {
-		type: 'alert',
-		title: book['title'],
-		body: bodyText,
+		type: 'component',
+		component: c,
+		title: `Viewing ${book['title']}...`,
 		image: book['imageLink']
 	};
 	modalStore.trigger(data)
+	// const bodyText = `
+	// Title: ${book['title']}
+	// Author: ${book['author']}
+	// Genre: ${book['genre']}
+	// Publication Date: ${book['pubDate']}
+	// Page Count: ${book['pageCount']}
+	// Description: ${book['description']}
+	// Publisher: ${book['publisher']}
+	// Language: ${book['languge']}`
+	// console.log(book);
+	// currentBook = book;
+
 }
 
 function confirmDeleteBook(book) {
@@ -198,8 +225,9 @@ dataTableModel.subscribe((v) => dataTableHandler(v));
 			<button class="btn btn-ghost-surface btn-sm ml-[60.5px] items-right" use:menu={{ menu: 'navigation' }}>Add Book...</button>
 			<nav class="list-nav card p-4 w-40 shadow-xl" data-menu="navigation">
 				<ul>
-					<li><a href={''} on:click={addISBN}>From ISBN</a></li>
 					<li><a href={''} on:click={addBook}>From Input</a></li>
+					<li><a href={''} on:click={addISBN}>From ISBN</a></li>
+					<li><a href={''} on:click={addFile}>From File</a></li>
 				</ul>
 			</nav>
 			</span>
@@ -214,7 +242,7 @@ dataTableModel.subscribe((v) => dataTableHandler(v));
 							<th data-sort="author">Author</th>
 							<th data-sort="genre">Genre</th>
 							<th data-sort="pubData">Publication Date</th>
-							<th data-sort="copies">Copies</th>
+							<th data-sort="copies">Copies in Stock</th>
 							<!-- <th data-sort="isbn">ISBN</th> -->
 							<th class="edit">Modify</th>
 							<!-- ... --->
@@ -227,11 +255,9 @@ dataTableModel.subscribe((v) => dataTableHandler(v));
 								<td>{row.author}</td>
 								<td>{row.genre}</td>
 								<td>{row.pubDate}</td>
-								<td></td>
-								<!-- <td>{row.isbn}</td> -->
+								<td>{row.copies}</td>
 								<td class="edit">
-									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{console.log(row, rowIndex)}}>Edit</button>
-									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{viewBookData(row)}}>View</button>
+									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{viewBookData(row)}}>View/Edit</button>
 									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{confirmDeleteBook(row)}}>Delete</button>
 								</td>
 							</tr>
@@ -240,7 +266,8 @@ dataTableModel.subscribe((v) => dataTableHandler(v));
 				</table>
 			</div>
 			{:else}
-			<ProgressRadial stroke={40} meter="stroke-primary-500" value={undefined} class="scale-50 -translate-y-32" />
+			<!-- <ProgressRadial stroke={40} meter="stroke-primary-500" value={undefined} class="scale-50 -translate-y-32" /> -->
+			<ProgressBar class="h-8 rounded-full"/>
 			{/if}
 		<div class="card-footer">
 			<Paginator bind:settings={$dataTableModel.pagination} />

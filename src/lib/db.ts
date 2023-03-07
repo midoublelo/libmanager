@@ -7,6 +7,7 @@ export interface Book {
     author: string;
     genre: string;
     pubDate: string;
+    copies: number;
     isbn?: string;
     pageCount?: string;
     description?: string;
@@ -42,13 +43,14 @@ export async function wipeDb() {
     db.books.clear()
 }
 
-export async function addItem(id, title, author, genre, pubDate, isbn?, pageCount?, description?, imageLink?, publisher?, language?) {
+export async function addItem(id, title, author, genre, pubDate, copies, isbn?, pageCount?, description?, imageLink?, publisher?, language?) {
     await db.books.add({
         id: id,
         title: title,
         author: author,
         genre: genre,
         pubDate: pubDate,
+        copies: copies,
         isbn: isbn,
         pageCount: pageCount,
         description: description,
@@ -56,4 +58,8 @@ export async function addItem(id, title, author, genre, pubDate, isbn?, pageCoun
         publisher: publisher,
         language: language
     })
+}
+
+export async function updateItem(newBook, existingBook) {
+    await db.books.update(existingBook['id'], newBook)
 }

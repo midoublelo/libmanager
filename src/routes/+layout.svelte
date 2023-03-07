@@ -18,7 +18,7 @@
   import Fa from 'svelte-fa';
   import { faUser, faHouse, faBook, faUsers, faGears } from '@fortawesome/free-solid-svg-icons';
 
-  import { Settings } from '$lib/values';
+  import { Settings } from '$lib/stores';
   let title = Settings.title;
 </script>
 
