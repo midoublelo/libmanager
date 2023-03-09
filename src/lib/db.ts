@@ -16,14 +16,21 @@ export interface Book {
     language?: string;
 }
 
+export interface User {
+    email: string;
+    password: string;
+}
+
 export class meDexie extends Dexie {
     books!: Table<Book>;
+    users!: Table<User>;
 
     constructor() {
         super('library')
         this.version(1).stores({
             books: '++id, title, author, genre'
         })
+        this.version(2).stores({users: '++id, &email, password'})
     }
 }
 
@@ -62,4 +69,23 @@ export async function addItem(id, title, author, genre, pubDate, copies, isbn?, 
 
 export async function updateItem(newBook, existingBook) {
     await db.books.update(existingBook['id'], newBook)
+}
+
+export async function validateUser(user, pass) {
+    const isUser = await db.users.get({
+        email: user,
+        password: pass
+    })
+    if (isUser == undefined) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+export async function addUser(user, pass) {
+    await db.users.add({
+        email: user,
+        password: pass
+    })
 }

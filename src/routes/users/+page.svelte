@@ -10,8 +10,12 @@
 		menu
 	} from '@skeletonlabs/skeleton';
 
+	import { db } from "$lib/db";
+	import { browser } from '$app/environment';
+	import { liveQuery } from "dexie";
+
     let sourceData = [
-        { id: 0, email: "email@email.com" }
+        {}
     ]
 
 const userTableModel = createDataTableStore(
@@ -27,12 +31,19 @@ const userTableModel = createDataTableStore(
 		pagination: { offset: 0, limit: 5, size: 0, amounts: [1, 5, 10, 25] }
 	}
 );
+
+	const users = liveQuery(() => db.users.toArray());
+	async function loadUsers() {
+		console.log($users)
+	}
+
+$: console.log(sourceData), loadUsers()
 </script>
 
 <div class="container mx-auto p-8 space-y-8">
 	<section class="card card-body">
 		<div class="card-header">
-			<input bind:value={$userTableModel.search} type="search" placeholder="Search Table..." class="mx-auto w-[48rem] space-y-1 placeholder:italic placeholder:ml-[16px]"/>
+			<input bind:value={$userTableModel.search} type="search" placeholder="Search Users..." class="mx-auto w-[48rem] space-y-1 placeholder:italic placeholder:ml-[16px]"/>
 		</div>
 		<div class="card-body">
 			<div class="table-container">

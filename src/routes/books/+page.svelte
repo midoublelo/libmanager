@@ -220,7 +220,7 @@ dataTableModel.subscribe((v) => dataTableHandler(v));
 <div class="container mx-auto p-8 space-y-8">
 	<section class="card card-body">
 		<div class="card-header">
-			<input bind:value={$dataTableModel.search} type="search" placeholder="Search Table..." class="mx-auto w-[48rem] space-y-1 placeholder:italic placeholder:ml-[16px]"/>
+			<input bind:value={$dataTableModel.search} type="search" placeholder="Quick Search..." class="mx-auto w-[48rem] space-y-1 placeholder:italic placeholder:ml-[16px]"/>
 			<span class="relative">
 			<button class="btn btn-ghost-surface btn-sm ml-[60.5px] items-right" use:menu={{ menu: 'navigation' }}>Add Book...</button>
 			<nav class="list-nav card p-4 w-40 shadow-xl" data-menu="navigation">

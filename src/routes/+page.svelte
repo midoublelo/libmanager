@@ -5,9 +5,9 @@
 
 	const data = {
 		labels: [
-			'Red',
-			'Blue',
-			'Yellow'
+			'Books Added',
+			'Books Taken Out',
+			'Books Added to Stock'
 		],
 		datasets: [{
 			label: 'Test Chart',
@@ -26,25 +26,39 @@
 		data: data
 	}
 
-	let ctx;
+	let ctx1;
+	let ctx2;
 	let chart1;
+	let chart2;
 	Chart.defaults.color = '#FFFFFF'
 
 	onMount(async (promise) => {
-		ctx = chart1.getContext('2d');
-		var chart = new Chart(ctx, chartConfig)
+		ctx1 = chart1.getContext('2d');
+		ctx2 = chart2.getContext('2d');
+		var charta1 = new Chart(ctx1, chartConfig)
+		var charta2 = new Chart(ctx2, chartConfig)
 	})
 
 </script>
 
 <div class="container mx-auto p-8 space-y-8">
     <GradientHeading tag="h1" direction="bg-gradient-to-br" from="from-primary-500" to="to-accent-500">
-        Homepage
+        Welcome to Your Library
     </GradientHeading>
-	<p>hello1.</p>
-	<hr />
-	<section class="card card-body">
-		<canvas bind:this={chart1} id="myChart" class="scale-50 -translate-x-32 translate-y-16"></canvas>
-	</section>
-	<hr />
+	<p>...</p>
+	<!-- <hr />
+	<div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+		<div class="space-y-4">
+			<label class="label">
+				<span>Today's Activity</span>
+				<canvas bind:this={chart1} id="myChart" class=" -translate-x-8 translate-y-16"></canvas>
+			</label>
+		</div>
+		<div class="space-y-4">
+			<label class="label">
+				<span>test</span>
+				<canvas bind:this={chart2} id="myChart" class=" -translate-x translate-y-16"></canvas>
+			</label>
+		</div>
+	</div> -->
 </div>
