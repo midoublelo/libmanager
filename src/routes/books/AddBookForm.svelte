@@ -1,10 +1,6 @@
 <script lang="ts">
-	// Props
-	/** Exposes parent props to this component. */
 	export let parent: any;
-	// Stores
 	import { modalStore } from "@skeletonlabs/skeleton";
-	// Form Data
 	const formData = {
 		title: '',
 		author: '',
@@ -12,26 +8,65 @@
 		pubDate: '',
 		copies: 0
 	};
-	// We've created a custom submit function to pass the response and close the modal.
+
+	const validationChecks = [
+		formData.title != "",
+		formData.author != "",
+		formData.genre != "",
+		formData.pubDate != ""
+	]
 	function onFormSubmit(): void {
-		if ($modalStore[0].response) $modalStore[0].response(formData);
-		modalStore.close();
+		if (!validationChecks.includes(false)) {
+			if ($modalStore[0].response) $modalStore[0].response(formData);
+			modalStore.close();
+		} else {
+			alert("Error: Missing book data!")
+		}
 	}
-	// Base Classes
+
 	const cBase: string = 'space-y-4';
 	const cForm: string = 'border border-surface-500 p-4 space-y-4 rounded-container-token';
 
-	function onNextHandler(e: any): void {
-		console.log('event:next', e.detail);
-	}
-	function onBackHandler(e: any): void {
-		console.log('event:prev', e.detail);
-	}
-	function onCompleteHandler(e: any): void {
-		console.log('event:complete', e.detail);
-		alert('Complete!');
-	}
+	// function onNextHandler(e: any): void {
+	// 	console.log('event:next', e.detail);
+	// }
+	// function onBackHandler(e: any): void {
+	// 	console.log('event:prev', e.detail);
+	// }
+	// function onCompleteHandler(e: any): void {
+	// 	console.log('event:complete', e.detail);
+	// 	alert('Complete!');
+	// }
 </script>
+
+<div class="modal-example-form {cBase}">
+	<form class="modal-form {cForm}">
+		<label>
+			<span>Title</span>
+			<input type="text" bind:value={formData.title} placeholder="Enter title..." required />
+		</label>
+		<label>
+			<span>Author</span>
+			<input type="text" bind:value={formData.author} placeholder="Enter author..." required />
+		</label>
+		<label>
+			<span>Genre</span>
+			<input type="text" bind:value={formData.genre} placeholder="Enter genre..." required />
+		</label>
+		<label>
+			<span>Publication Date</span>
+			<input type="text" bind:value={formData.pubDate} placeholder="Enter publication date..." required />
+		</label>
+		<label>
+			<span>Copies in Stock</span>
+			<input type="number" bind:value={formData.copies} placeholder="Enter number of copies..." required />
+		</label>
+	</form>
+	<footer class="modal-footer {parent.regionFooter}">
+        <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
+        <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Submit Form</button>
+    </footer>
+</div>
 
 <!-- <Stepper on:next={onNextHandler} on:back={onBackHandler} on:complete={onCompleteHandler}>
 	<Step>
@@ -50,32 +85,3 @@
 		<input class="input" id="language" type="text" placeholder="Language"/>
 	</Step>
 </Stepper> -->
-
-<div class="modal-example-form {cBase}">
-	<form class="modal-form {cForm}">
-		<label>
-			<span>Title</span>
-			<input type="text" bind:value={formData.title} placeholder="Enter title..." required/>
-		</label>
-		<label>
-			<span>Author</span>
-			<input type="text" bind:value={formData.author} placeholder="Enter author..." required/>
-		</label>
-		<label>
-			<span>Genre</span>
-			<input type="text" bind:value={formData.genre} placeholder="Enter genre..." required/>
-		</label>
-		<label>
-			<span>Publication Date</span>
-			<input type="text" bind:value={formData.pubDate} placeholder="Enter publication date..." required/>
-		</label>
-		<label>
-			<span>Copies in Stock</span>
-			<input type="number" bind:value={formData.copies} placeholder="Enter number of copies..." required/>
-		</label>
-	</form>
-	<footer class="modal-footer {parent.regionFooter}">
-        <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
-        <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Submit Form</button>
-    </footer>
-</div>

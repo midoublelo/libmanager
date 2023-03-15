@@ -7,7 +7,8 @@
 		Paginator,
 		Modal,
 		modalStore,
-		menu
+		menu,
+        ProgressBar
 	} from '@skeletonlabs/skeleton';
 
 	import { db } from "$lib/db";
@@ -46,6 +47,7 @@ $: console.log(sourceData), loadUsers()
 			<input bind:value={$userTableModel.search} type="search" placeholder="Search Users..." class="mx-auto w-[48rem] space-y-1 placeholder:italic placeholder:ml-[16px]"/>
 		</div>
 		<div class="card-body">
+			{#if $users}
 			<div class="table-container">
 				<table class="table table-hover" use:tableInteraction>
 					<thead on:click={(e) => { userTableModel.sort(e) }} on:keypress>
@@ -70,6 +72,9 @@ $: console.log(sourceData), loadUsers()
 					</tbody>
 				</table>
 			</div>
+			{:else}
+			<ProgressBar class="h-8 rounded-full"/>
+			{/if}
 		</div>
 		<div class="card-footer">
 			<Paginator bind:settings={$userTableModel.pagination} />
