@@ -1,25 +1,22 @@
 <script lang="ts">
-  import '@skeletonlabs/skeleton/themes/theme-rocket.css';
-  import '@skeletonlabs/skeleton/styles/all.css';
-  import "../app.postcss";
+    import '@skeletonlabs/skeleton/themes/theme-rocket.css';
+    import '@skeletonlabs/skeleton/styles/all.css';
+    import "../app.postcss";
 
-  import LoginForm from '../components/LoginForm.svelte';
-  import { store } from "../hooks/auth"
+    import LoginForm from '../components/LoginForm.svelte';
+    import { store } from "../hooks/auth"
 
-    // Logout
-    // $store = null;
-
-  function logOut() {
+    function logOut() {
     $store = "";
-  }
+    }
 
-  import { AppShell, AppBar, LightSwitch, Modal, menu } from '@skeletonlabs/skeleton';
-  
-  import Fa from 'svelte-fa';
-  import { faUser, faHouse, faBook, faUsers, faGears } from '@fortawesome/free-solid-svg-icons';
+    import { AppShell, AppBar, LightSwitch, Modal, menu } from '@skeletonlabs/skeleton';
 
-  import { Settings } from '$lib/stores';
-  let title = Settings.title;
+    import Fa from 'svelte-fa';
+    import { faUser, faHouse, faBook, faUsers, faGears } from '@fortawesome/free-solid-svg-icons';
+
+    import { Settings } from '$lib/stores';
+    let title = Settings.title;
 </script>
 
 {#if $store != ""}

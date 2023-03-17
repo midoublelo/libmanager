@@ -1,5 +1,7 @@
 // import "fake-indexeddb/auto";
 import Dexie, { type Table } from "dexie";
+import { store } from "../hooks/auth"
+import { currentBook } from "./stores";
 
 export interface Book {
     id: number;
@@ -19,18 +21,30 @@ export interface Book {
 export interface User {
     email: string;
     password: string;
+    books: object;
+    currentFee: number;
+    type: string;
 }
+
+export interface Borrow {
+    book: object;
+    user: object;
+    returnDate: string;
+    lastChecked: string;
+}
+
+export const emailCheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export class meDexie extends Dexie {
     books!: Table<Book>;
     users!: Table<User>;
+    borrows!: Table<Borrow>;
 
     constructor() {
         super('library')
-        this.version(1).stores({
-            books: '++id, title, author, genre'
-        })
-        this.version(2).stores({users: '++id, &email, password'})
+        this.version(1).stores({books: '++id, title, author, genre'})
+        this.version(2).stores({users: '++id, &email, password, books, type'})
+        this.version(3).stores({borrows: '++id, book, user, returnDate'})
     }
 }
 
@@ -83,9 +97,52 @@ export async function validateUser(user, pass) {
     }
 }
 
-export async function addUser(user, pass) {
-    await db.users.add({
-        email: user,
-        password: pass
+export async function addUser(user, pass, type) {
+    if ( emailCheck.test(user) == true ) { // If input is valid email then move onto next check
+        const existCheck = await db.users.where( {email: user} ).first(); // Reads users table to see if email is already taken
+        if (existCheck == undefined) { // If input is valid email and is unused then add the user and login
+            await db.users.add({
+                email: user,
+                password: pass,
+                books: {},
+                currentFee: 0.00,
+                type: type
+            })
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
+export async function updateUser(newUser, existingUser) {
+    await db.users.update(existingUser['id'], newUser)
+}
+
+export async function addBorrow(book, user, date, lastChecked) {
+    db.borrows.add({
+        book: book,
+        user: user,
+        returnDate: date,
+        lastChecked: lastChecked
+    })
+    db.users.where("id").equals(user.id).modify({books: book})
+}
+
+export async function wipeUsers() {
+    db.users.clear();
+}
+
+export async function addFees(fee, user) {
+    //let currentFee = await db.users.where("id").equals(user.id).toArray();
+    //db.users.where("id").equals(user.id).modify({currentFee: fee})
+    db.users.where("id").equals(user.id).modify(function(value) {
+        this.value.currentFee += fee
+    })
+}
+
+export async function removeFees(fee, user) {
+    db.users.where("id").equals(user.id).modify(function(value) {
+        this.value.currentFee -= fee
     })
 }

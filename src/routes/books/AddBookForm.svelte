@@ -9,14 +9,8 @@
 		copies: 0
 	};
 
-	const validationChecks = [
-		formData.title != "",
-		formData.author != "",
-		formData.genre != "",
-		formData.pubDate != ""
-	]
 	function onFormSubmit(): void {
-		if (!validationChecks.includes(false)) {
+		if ( formData.title !== "" && formData.author !== "" && formData.genre !== "" && formData.pubDate !== "" ) {
 			if ($modalStore[0].response) $modalStore[0].response(formData);
 			modalStore.close();
 		} else {

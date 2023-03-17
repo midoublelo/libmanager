@@ -1,17 +1,25 @@
 <script lang="ts">
-import { db, wipeDb } from '$lib/db';
-import { Settings, updateSettings } from '$lib/stores';
-import { TabGroup, Tab } from '@skeletonlabs/skeleton';
-import { writable } from 'svelte/store';
+    import { wipeDb, wipeUsers } from '$lib/db';
+    import { Settings, updateSettings } from '$lib/stores';
+    import { TabGroup, Tab } from '@skeletonlabs/skeleton';
+    import { writable } from 'svelte/store';
+    import { store } from '../../hooks/auth';
 
-let storeThree = writable('a');
+    let storeThree = writable('a');
 
-function saveSettings() {
-    updateSettings([
-        (<HTMLInputElement>document.getElementById("libName")).value
-        ])
-    console.log((<HTMLInputElement>document.getElementById("libName")).value)
-}
+    function saveSettings() {
+        updateSettings([
+            (<HTMLInputElement>document.getElementById("libName")).value
+            ])
+        console.log((<HTMLInputElement>document.getElementById("libName")).value)
+    }
+
+    function deleteAllUsers() {
+        wipeUsers();
+        $store = "";
+        location.reload()
+    }
+
 </script>
 
 <div class="container mx-auto p-8 space-y-8">
@@ -44,6 +52,7 @@ function saveSettings() {
                         <button class="btn variant-filled-primary btn-base" on:click={()=>{saveSettings()}}>Save</button>
                         <br/>
                         <button class="btn variant-filled-primary" on:click={()=>{wipeDb()}}>Delete All Books</button>
+                        <button class="btn variant-filled-primary" on:click={()=>{wipeUsers()}}>Delete All Users</button>
                     </div>
                 </div>
             {/if}

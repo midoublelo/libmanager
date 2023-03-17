@@ -1,17 +1,13 @@
 <script lang="ts">
-	// import "fake-indexeddb/auto";
 	import * as isbn from 'node-isbn';
 
 	import {
 		createDataTableStore,
 		dataTableHandler,
 		tableInteraction,
-		tableA11y,
 		Paginator,
-		Modal,
 		modalStore,
 		menu,
-        ProgressRadial,
         ProgressBar,
 	} from '@skeletonlabs/skeleton';
 	
@@ -23,9 +19,10 @@
 
 	import { browser } from '$app/environment';
 	import { liveQuery } from "dexie";
-	import { addItem, db } from "$lib/db";
+	import { addBorrow, addItem, db } from "$lib/db";
 	import { currentBook } from '$lib/stores';
     import UploadFile from './UploadFile.svelte';
+    import BorrowBook from './BorrowBook.svelte';
 
 	const bookList = liveQuery(
 		async () => browser
@@ -33,72 +30,59 @@
 			: []
 	);
 
-	// let query = readDb()
-	// console.log(query)
-	// console.log($bookList)
-	// db.books.where("name").equalsIgnoreCase("testBook").each(friend => {
-    //     console.log("Found Josephine", friend);
-    // });
-
-	// let nothing = {
-    //     id: -1,
-	// }
-	// const booksStore: Writable<string> = localStorageStore('booksStore', JSON.stringify(nothing));
 	let sourceData = [
 		{}
 	];
 
-const dataTableModel = createDataTableStore(
-	sourceData,
-	{
-		search: '',
-		sort: '',
-		pagination: { offset: 0, limit: 5, size: 0, amounts: [1, 5, 10, 25] }
-	}
-);
-
-function loadSource() {
-	if ($bookList !== undefined) {
-		// @ts-ignore
-		sourceData = $bookList;
-		dataTableModel.updateSource(sourceData);
-		console.log(sourceData)
-	}
-}
-$: console.log($bookList), loadSource()
-
-async function confirmBook(bookData: object) {
-	let id;
-	if (sourceData.length > 0) {
-		const lastInd = sourceData.at(-1);
-		// @ts-ignore
-		id = lastInd['id'] + 1;
-	} else {
-		id = 0;
-	}
-	// @ts-ignore
-	bookData["id"] = id;
-	const confirm: ModalSettings = {
-		type: 'confirm',
-		title: 'Please Confirm',
-		body: 'Are you sure you wish to proceed?',
-		// confirm = TRUE | cancel = FALSE
-		response: (r: boolean) => {
-			if (r) {
-				addItem(
-					bookData["id"],
-					bookData["title"],
-					bookData["author"],
-					bookData["genre"],
-					bookData["pubDate"],
-					bookData["copies"])
-				loadSource()
-			}
+	const dataTableModel = createDataTableStore(
+		sourceData,
+		{
+			search: '',
+			sort: '',
+			pagination: { offset: 0, limit: 5, size: 0, amounts: [1, 5, 10, 25] }
 		}
-	};
-	modalStore.trigger(confirm);
-	// dataTableModel.update((v) => dataTableHandler(v));
-}
+	);
+
+	function loadSource() {
+		if ($bookList !== undefined) {
+			// @ts-ignore
+			sourceData = $bookList;
+			dataTableModel.updateSource(sourceData);
+		}
+	}
+
+	$: console.log("IGNORE ME:", $bookList), loadSource()
+
+	async function confirmBook(bookData: object) {
+		let id;
+		if (sourceData.length > 0) {
+			const lastInd = sourceData.at(-1);
+			// @ts-ignore
+			id = lastInd['id'] + 1;
+		} else {
+			id = 0;
+		}
+		// @ts-ignore
+		bookData["id"] = id;
+		const confirm: ModalSettings = {
+			type: 'confirm',
+			title: 'Please Confirm',
+			body: 'Are you sure you wish to proceed?',
+			response: (r: boolean) => {
+				if (r) {
+					addItem(
+						bookData["id"],
+						bookData["title"],
+						bookData["author"],
+						bookData["genre"],
+						bookData["pubDate"],
+						bookData["copies"])
+					loadSource()
+				}
+			}
+		};
+		modalStore.trigger(confirm);
+	}
 
 function addBook(): void {
 	const c: ModalComponent = { ref: AddBookForm };
@@ -108,26 +92,25 @@ function addBook(): void {
 			body: 'Enter required book details. Additional optional information can be added afterwards.',
 			component: c,
 			response: (r: any) => {
-				// if (r) console.log('response:', r);
 				if (r) confirmBook(r);
 			}
 		};
 	modalStore.trigger(d);
 }
 
-function addFile(): void {
-	const c: ModalComponent = { ref: UploadFile };
-	const d: ModalSettings = {
-		type: 'component',
-		title: 'Add Books',
-		body: 'Upload .csv file to add multiple books at once.',
-		component: c,
-		response: (r: any) => {
-			if (r) console.log(r)
-		}
-	}
-	modalStore.trigger(d);
-}
+// function addFile(): void {
+// 	const c: ModalComponent = { ref: UploadFile };
+// 	const d: ModalSettings = {
+// 		type: 'component',
+// 		title: 'Add Books',
+// 		body: 'Upload .csv file to add multiple books at once.',
+// 		component: c,
+// 		response: (r: any) => {
+// 			if (r) console.log(r)
+// 		}
+// 	}
+// 	modalStore.trigger(d);
+// }
 
 function getIsbn(isbnCode: any): any {
 	try { 
@@ -140,41 +123,39 @@ function getIsbn(isbnCode: any): any {
 
 function addISBN(): void {
 	const c: ModalComponent = { ref: AddIsbnForm };
-		const d: ModalSettings = {
-			type: 'component',
-			title: 'Add Book',
-			body: 'Enter ISBN',
-			component: c,
-			response: async (r: any) => {
-				if (r) {
-					const book: any = await getIsbn(r['isbn']);
-					book['isbn'] = r['isbn'];
-					if (book.categories[0] == undefined) {
-						book.categories[0] = "undefined"
-					}
-					let rebuiltBook = {
-						title: book.title,
-						author: book.authors[0],
-						genre: book.categories[0],
-						pubDate: book.publishedDate,
-						isbn: book.isbn,
-						pageCount: book.pageCount,
-						description: book.description,
-						imageLink: book.imageLinks['smallThumbnail'],
-						publisher: book.publisher,
-						language: book.language
-					}
-					console.log(rebuiltBook)
-					confirmBook(rebuiltBook);
+	const d: ModalSettings = {
+		type: 'component',
+		title: 'Add Book',
+		body: 'Enter ISBN',
+		component: c,
+		response: async (r: any) => {
+			if (r) {
+				const book: any = await getIsbn(r['isbn']);
+				book['isbn'] = r['isbn'];
+				if (book.categories[0] == undefined) {
+					book.categories[0] = "undefined"
 				}
+				let rebuiltBook = {
+					title: book.title,
+					author: book.authors[0],
+					genre: book.categories[0],
+					pubDate: book.publishedDate,
+					isbn: book.isbn,
+					pageCount: book.pageCount,
+					description: book.description,
+					imageLink: book.imageLinks['smallThumbnail'],
+					publisher: book.publisher,
+					language: book.language
+				}
+				confirmBook(rebuiltBook);
 			}
-		};
+		}
+	};
 	modalStore.trigger(d);
 }
 
 function viewBookData(book) {
 	$currentBook = book;
-	console.log($currentBook)
 	const c: ModalComponent = { ref: ViewBook };
 	const data: ModalSettings = {
 		type: 'component',
@@ -183,18 +164,6 @@ function viewBookData(book) {
 		image: book['imageLink']
 	};
 	modalStore.trigger(data)
-	// const bodyText = `
-	// Title: ${book['title']}
-	// Author: ${book['author']}
-	// Genre: ${book['genre']}
-	// Publication Date: ${book['pubDate']}
-	// Page Count: ${book['pageCount']}
-	// Description: ${book['description']}
-	// Publisher: ${book['publisher']}
-	// Language: ${book['languge']}`
-	// console.log(book);
-	// currentBook = book;
-
 }
 
 function confirmDeleteBook(book) {
@@ -207,17 +176,39 @@ function confirmDeleteBook(book) {
 				db.books.where('id').equals(book.id).delete();
 				loadSource();
 			} 
-
 		}
 	}
 	modalStore.trigger(confirm)
 }
 
-// Automatically handles search, sort, etc when the model updates.
+function borrowBook(book) {
+	$currentBook = book;
+	const c: ModalComponent = { ref: BorrowBook };
+	const data: ModalSettings = {
+		type: 'component',
+		component: c,
+		title: `Borrowing ${book['title']}...`,
+		image: book['imageLink'],
+		response: (r: any) => {
+			let borrowInfo = {
+				book: book,
+				user: r.user,
+				returnDate: r.returnDate
+			}
+			if (borrowInfo.user !== undefined || borrowInfo.returnDate !== undefined) {
+				let todayFormatted = (new Date()).toISOString().split('T')[0];
+				addBorrow(borrowInfo.book, borrowInfo.user, borrowInfo.returnDate, todayFormatted)
+			}
+		}
+	};
+	modalStore.trigger(data)
+}
+
 dataTableModel.subscribe((v) => dataTableHandler(v));
 </script>
 
 <div class="container mx-auto p-8 space-y-8">
+	<h2>All Books in Database</h2>
 	<section class="card card-body">
 		<div class="card-header">
 			<input bind:value={$dataTableModel.search} type="search" placeholder="Quick Search..." class="mx-auto w-[48rem] space-y-1 placeholder:italic placeholder:ml-[16px]"/>
@@ -227,7 +218,7 @@ dataTableModel.subscribe((v) => dataTableHandler(v));
 				<ul>
 					<li><a href={''} on:click={addBook}>From Input</a></li>
 					<li><a href={''} on:click={addISBN}>From ISBN</a></li>
-					<li><a href={''} on:click={addFile}>From File</a></li>
+					<!-- <li><a href={''} on:click={addFile}>From File</a></li> -->
 				</ul>
 			</nav>
 			</span>
@@ -257,6 +248,7 @@ dataTableModel.subscribe((v) => dataTableHandler(v));
 								<td>{row.pubDate}</td>
 								<td>{row.copies}</td>
 								<td class="edit">
+									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{borrowBook(row)}}>Borrow</button>
 									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{viewBookData(row)}}>View/Edit</button>
 									<button class="btn btn-ghost-surface btn-sm" on:click={()=>{confirmDeleteBook(row)}}>Delete</button>
 								</td>

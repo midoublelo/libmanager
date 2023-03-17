@@ -13,7 +13,7 @@
 	const cHeader = 'text-2xl font-bold';
 	const cImage = 'max-w-[90%] max-h-[90%] rounded-container-token overflow-hidden shadow-xl';
 
-    function updateBook() {
+    function updateBookDetails() {
         let newBook = {
             title: document.getElementById("title").value ? document.getElementById("title").value : $currentBook['title'],
             author: document.getElementById("author").value ? document.getElementById("author").value : $currentBook['author'],
@@ -76,6 +76,6 @@
             <span>Copies</span>
             <input class="input" id="copies" type="text" placeholder={$currentBook['copies']} />
         </label>
-        <button class="btn variant-filled-primary" on:click={()=>{updateBook()}}>Update</button>
+        <button class="btn variant-filled-primary" on:click={()=>{updateBookDetails()}}>Update</button>
     </div>
 </div>

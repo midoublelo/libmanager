@@ -1,31 +1,32 @@
 <script lang="ts">
-    import { addUser } from "$lib/db";
-    import { getUserDetails } from "../hooks/auth";
-    import { store } from "../hooks/auth";
+    import { addUser, db, emailCheck } from "$lib/db";
+    import { getUserDetails, store } from "../hooks/auth";
 
     let username = "";
     let password = "";
     let error = "";
 
     async function login() {
-        // addUser("test@test.com", "password")
         const user: any = await getUserDetails( username, password )
 
         if ( user ) {
-            console.log(user)
             $store = user
             if ( error ) error = ""
-        }
-        else {
+        } else {
             error = "Incorrect username and password"
-            console.log(error)
-            console.log(username, password)
         }
     }
 
     async function signUp() {
-        addUser(username, password);
-        login()
+        if (emailCheck.test(username) == true ) { // If input is valid email then move onto next check
+            const existCheck = await db.users.where( {email: username} ).first(); // Reads users table to see if email is already taken
+            if (existCheck == undefined) { // If input is valid email and is unused then add the user and login
+                await addUser(username, password, "Staff");
+                login()
+            } else {
+                alert('User with that email already exists')
+            }
+        }
     }
 
     function prevAccess() {
@@ -33,7 +34,7 @@
     }
 </script>
 
-<form on:submit|preventDefault={login} class="flex flex-col items-center justify-center pt-6 content-center">
+<form on:submit class="flex flex-col items-center justify-center pt-6 content-center">
     <div class="card w-3/5">
         <header class="card-header"><h1 class="text-center">Login</h1></header>
         <div class="card-body">
