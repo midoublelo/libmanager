@@ -7,7 +7,7 @@
     import { store } from "../hooks/auth"
 
     function logOut() {
-    $store = "";
+      $store = "";
     }
 
     import { AppShell, AppBar, LightSwitch, Modal, menu } from '@skeletonlabs/skeleton';
@@ -15,8 +15,14 @@
     import Fa from 'svelte-fa';
     import { faUser, faHouse, faBook, faUsers, faGears } from '@fortawesome/free-solid-svg-icons';
 
-    import { Settings } from '$lib/stores';
+    import { Settings, theme } from '$lib/stores';
     let title = Settings.title;
+
+    // theme.subscribe(setTheme);
+    // function setTheme() {
+    //   // if (!browser) return;
+    //   document.body.setAttribute('data-theme', $theme)
+    // }
 </script>
 
 {#if $store != ""}
@@ -45,7 +51,7 @@
           <li><a href="/"><Fa icon={faHouse} /> Home</a></li>
           <li><a href="/books"><Fa icon={faBook} /> Books</a></li>
           <li><a href="/users"><Fa icon={faUsers} /> Users</a></li>
-          <li><a href="/settings"><Fa icon={faGears} />Settings</a></li>
+          <!-- <li><a href="/settings"><Fa icon={faGears} />Settings</a></li> -->
         </ul>
       </nav>
     </svelte:fragment>

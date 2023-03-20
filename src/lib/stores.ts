@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 
 export const currentBook = writable();
 export const currentUser = writable();
+export const theme = writable();
 
 export let Settings = {
     title: "My Library"

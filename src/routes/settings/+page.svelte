@@ -2,8 +2,10 @@
     import { wipeDb, wipeUsers } from '$lib/db';
     import { Settings, updateSettings } from '$lib/stores';
     import { AccordionGroup, AccordionItem } from '@skeletonlabs/skeleton';
+    import type { SubmitFunction } from '@sveltejs/kit';
     import { writable } from 'svelte/store';
     import { store } from '../../hooks/auth';
+    import { theme } from "$lib/stores";
 
     function saveSettings() {
         updateSettings([
@@ -12,11 +14,20 @@
         console.log((<HTMLInputElement>document.getElementById("libName")).value)
     }
 
-    function deleteAllUsers() {
-        wipeUsers();
-        $store = "";
-        location.reload()
-    }
+    const themes = [
+        { type: 'rocket', name: 'Theme 1'},
+        { type: 'modern', name: 'Theme 2'}
+    ]
+
+	// const setTheme: SubmitFunction = () => {
+	// 	return async ({ result, update }) => {
+	// 		await update();
+	// 		if (result.type === 'success') {
+	// 			const newTheme = result.data?.newTheme as string;
+	// 			theme.set(newTheme);
+	// 		}
+	// 	};
+	// };
 
 </script>
 
@@ -44,6 +55,7 @@
             <div class="card card-body space-y-4">
                 Library Name <input id="libName">
                 <button class="btn variant-filled-primary btn-base" on:click={()=>{saveSettings()}}>Save</button>
+                <!-- <button on:click={()=>{setTheme()}} -->
                 <br/>
                 <AccordionGroup>
                     <AccordionItem>

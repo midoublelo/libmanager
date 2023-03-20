@@ -129,9 +129,7 @@
 </script>
 
 <div class="container mx-auto p-8 space-y-8">
-    <GradientHeading tag="h1" direction="bg-gradient-to-br" from="from-primary-500" to="to-accent-500">
-        Welcome to Your Library
-    </GradientHeading>
+	<h1>Welcome to Your Library</h1>
 	<h2>Books Currently Borrowed</h2>
 	<section class="card card-body">
 		<div class="card-header">
