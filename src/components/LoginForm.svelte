@@ -1,5 +1,6 @@
 <script lang="ts">
     import { addUser, db, emailCheck } from "$lib/db";
+    import { toastStore, type ToastSettings } from "@skeletonlabs/skeleton";
     import { getUserDetails, store } from "../hooks/auth";
 
     let username = "";
@@ -18,12 +19,20 @@
     }
 
     async function signUp() {
-        if (emailCheck.test(username) == true ) { // If input is valid email then move onto next check
-            const existCheck = await db.users.where( {email: username} ).first(); // Reads users table to see if email is already taken
-            if (existCheck == undefined) { // If input is valid email and is unused then add the user and login
+        // If input is valid email then move onto next check
+        if (emailCheck.test(username) == true ) {
+            // Reads users table to see if email is already taken
+            const existCheck = await db.users.where( {email: username} ).first();
+            // If input is valid email and is unused then add the user and login
+            if (existCheck == undefined) { 
+                // Adds new Staff account with provided user details
                 await addUser(username, password, "Staff");
                 login()
             } else {
+                // const error: ToastSettings = {
+                //     message: 'User with that email already exists.'
+                // }
+                // toastStore.trigger(error)
                 alert('User with that email already exists')
             }
         }
@@ -36,7 +45,7 @@
 
 <form on:submit class="flex flex-col items-center justify-center pt-6 content-center">
     <div class="card w-3/5">
-        <header class="card-header"><h1 class="text-center">Login</h1></header>
+        <header class="card-header"><h1 class="text-center">Welcome</h1></header>
         <div class="card-body">
             <label for="email">
                 <span>Email</span>

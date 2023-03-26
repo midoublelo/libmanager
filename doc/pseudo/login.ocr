@@ -1,0 +1,37 @@
+function login(email: string, password: string) then
+    // Validates if the user already exists in the database
+    user = validateUser(email, password)
+
+    // If the user is present in the database then login
+    if user == true then
+        // Set global value of loggedIn boolean to true
+        $loggedIn = user
+    else
+        // Show the error message if user doesn't exist
+        alert("Incorrect email and password")
+    endif
+endfunction
+
+// Regex expression for valid email
+emailCheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function signUp(email: string, password: string) then
+    // If input is valid email then move onto next check
+    if emailCheck.test(email) == true then
+        // Reads users table to see if email is already taken
+        existCheck = existsInDb(email)
+        // If input is valid email and is unused then add the user and login
+        if existCheck == undefined then
+            // Adds new Staff account with provided user details
+            addUser(email, password, "Staff")
+            // Automatically logs in with the new user
+            login(email, password)
+        else 
+            // Show error message if email already in use
+            alert("User with that email already exists")
+        endif
+    endif
+endfunction
+
+
+

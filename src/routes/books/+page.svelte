@@ -132,20 +132,22 @@ function addISBN(): void {
 			if (r) {
 				const book: any = await getIsbn(r['isbn']);
 				book['isbn'] = r['isbn'];
-				if (book.categories[0] == undefined) {
-					book.categories[0] = "undefined"
+				book['copies'] = r['copies']
+ 				if (book.hasOwnProperty('categories') == false || book.categories[0] == undefined || book.categories[0] == null) {
+					book.categories = "undefined"
 				}
 				let rebuiltBook = {
 					title: book.title,
 					author: book.authors[0],
-					genre: book.categories[0],
+					genre: book.categories,
 					pubDate: book.publishedDate,
 					isbn: book.isbn,
 					pageCount: book.pageCount,
 					description: book.description,
 					imageLink: book.imageLinks['smallThumbnail'],
 					publisher: book.publisher,
-					language: book.language
+					language: book.language,
+					copies: book.copies
 				}
 				confirmBook(rebuiltBook);
 			}

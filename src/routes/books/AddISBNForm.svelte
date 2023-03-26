@@ -5,6 +5,7 @@
 
 	const formData = {
 		isbn: '',
+		copies: ''
 	};
 
 	function onFormSubmit(): void {
@@ -21,6 +22,10 @@
 		<label>
 			<span>ISBN</span>
 			<input type="text" bind:value={formData.isbn} placeholder="Enter book ISBN..." />
+		</label>
+		<label>
+			<span>Copies in Stock</span>
+			<input type="number" bind:value={formData.copies} placeholder="Enter number of copies..." required />
 		</label>
 	</form>
 	<footer class="isbn-modal-footer {parent.regionFooter}">

@@ -1,0 +1,35 @@
+function calculateFees() then
+    // Get today's date
+    today = Date().toString()
+    // Iterate through all books currently being borrowed
+    for i = 0 to sourceData.length
+        // If the book is in date then set its status accordingly
+        // otherwise set it as late and calculate its late fees
+        if book['returnDate'] > today then
+            book['status'] = "In Date"
+        else
+            book['status'] = "Late"
+            // If this is not its first day of being late then calculate excess days fee
+            if book['lastChecked'] != today then
+                // Gets the time in milliseconds since 1970 to today
+                timeNow = Date(today).getTime()
+                // Gets the time in milliseconds since 1970 to the last time the book was checked
+                lastCheckedTime = Date(book['lastChecked']).getTime()
+                // Calculates the difference between today's time and the time last checked and
+                // converts it into days
+                daysDifference = timeNow - lastCheckedTime / (1000 * 3600 * 24)
+                // Add 20p for each day passed
+                lateFees = 0.2 * daysDiff
+                // Add the new fees to the user's account
+                addFees(lateFees, book['user'])
+                // Update the last checked value to today for next time it is checked
+                updateLastChecked(book['id'])
+            // If it's the first day of being late then set late fee to first day fee of £1
+            elseif book['lastChecked'] == today then
+                lateFees = 1
+                addFees(lateFees, book['user'])
+                updateLastChecked(book['id'])
+            endif
+        endif
+    endfor
+endfunction
